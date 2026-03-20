@@ -746,7 +746,7 @@ function renderMockTests() {
 // Local dev  : http://localhost:3001/api/quiz
 // Production : https://your-deployed-backend.onrender.com/api/quiz
 // API key lives in backend/.env — NEVER in this file.
-const BACKEND_URL = 'pbl-project-3ol5cxx6a-akhil3911s-projects.vercel.app/api/quiz';
+const BACKEND_URL = 'https://pbl-project-theta.vercel.app/api/quiz';
 
 // ── Demo / offline mode ──────────────────────────────────────
 // Set DEMO_MODE = true to use fallback-questions.js (no backend).

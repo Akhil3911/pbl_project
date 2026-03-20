@@ -14,7 +14,7 @@ const app  = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(cors({
-  origin: "pbl-project-3ol5cxx6a-akhil3911s-projects.vercel.app",
+  origin: "https://pbl-project-29wp.vercel.app/",
   methods: ['POST'],
   credentials: true,
 }));

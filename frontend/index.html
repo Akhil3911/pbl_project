@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PrepTrack — Placement Preparation Tracker</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ══════════════════════════ LOGIN ══════════════════════════ -->
+<div class="auth-screen active" id="loginScreen">
+  <div class="auth-bg-pattern"></div>
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="auth-logo">Prep<span>Track</span></div>
+      <div class="auth-sub">Placement Preparation Tracker</div>
+    </div>
+    <div class="auth-title">Welcome back</div>
+    <div class="auth-error" id="loginError"></div>
+    <div class="form-group">
+      <label>Email address</label>
+      <input type="email" id="loginEmail" placeholder="you@example.com"/>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="loginPass" placeholder="Min. 6 characters"/>
+    </div>
+    <button class="btn btn-primary" onclick="handleLogin()">
+      <span>Sign In</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+    <div class="auth-switch">Don't have an account? <a onclick="showScreen('register')">Create one</a></div>
+    <div class="auth-demo-note">
+      <span class="demo-icon">💡</span> Demo: any email + password (min 6 chars)
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ REGISTER ══════════════════════════ -->
+<div class="auth-screen" id="registerScreen">
+  <div class="auth-bg-pattern"></div>
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="auth-logo">Prep<span>Track</span></div>
+      <div class="auth-sub">Start your placement journey</div>
+    </div>
+    <div class="auth-title">Create your account</div>
+    <div class="auth-error" id="registerError"></div>
+    <div class="form-group">
+      <label>Full Name</label>
+      <input type="text" id="regName" placeholder="Rohan Sharma"/>
+    </div>
+    <div class="form-group">
+      <label>Email address</label>
+      <input type="email" id="regEmail" placeholder="you@example.com"/>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="regPass" placeholder="Min. 6 characters"/>
+    </div>
+    <button class="btn btn-primary" onclick="handleRegister()">
+      <span>Create Account</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+    <div class="auth-switch">Already have an account? <a onclick="showScreen('login')">Sign in</a></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ APP ══════════════════════════ -->
+<div id="app">
+
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <!-- ── Sidebar ── -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo">Prep<span>Track</span></div>
+      <div class="tagline">Placement Tracker</div>
+    </div>
+    <nav>
+      <button class="nav-item active" data-page="dashboard">
+        <span class="nav-icon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        </span>
+        Dashboard
+      </button>
+      <button class="nav-item" data-page="track">
+        <span class="nav-icon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </span>
+        Track Progress
+      </button>
+
+      <!-- ── Quiz nav item (AI-powered) ── -->
+      <button class="nav-item" data-page="quiz">
+        <span class="nav-icon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </span>
+        AI Quiz
+        <span class="nav-ai-pill">AI</span>
+      </button>
+
+      <button class="nav-item" data-page="roadmap">
+        <span class="nav-icon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+        </span>
+        Roadmap
+      </button>
+      <button class="nav-item" data-page="resources">
+        <span class="nav-icon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </span>
+        Resources
+      </button>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatar">R</div>
+        <div class="user-meta">
+          <div class="user-name" id="userName">—</div>
+          <div class="user-email" id="userEmail">—</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="handleLogout()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign out
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Main content ── -->
+  <div class="main">
+
+    <!-- Mobile top bar -->
+    <div class="mobile-topbar">
+      <button class="hamburger" id="hamburger" onclick="toggleSidebar()" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="mobile-logo">Prep<span>Track</span></div>
+    </div>
+
+    <!-- ═══════════ DASHBOARD PAGE ═══════════ -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h2 id="dashGreet">Good day 👋</h2>
+          <p>Here's your preparation overview</p>
+        </div>
+      </div>
+
+      <div class="stats-grid anim-stagger">
+        <div class="stat-card" data-accent="indigo">
+          <div class="stat-card-icon">📈</div>
+          <div class="stat-value stat-accent" id="overallPct">0%</div>
+          <div class="stat-label">Overall Progress</div>
+        </div>
+        <div class="stat-card" data-accent="teal">
+          <div class="stat-card-icon">🎯</div>
+          <div class="stat-value" id="statusLabel" style="font-size:22px;margin-top:4px;">Not Started</div>
+          <div class="stat-label">Current Status</div>
+        </div>
+        <div class="stat-card" data-accent="amber">
+          <div class="stat-card-icon">🔍</div>
+          <div class="stat-focus-label">Focus Next</div>
+          <div class="stat-value" id="focusNext" style="font-size:16px;font-weight:700;">—</div>
+          <div class="stat-label" id="focusSub" style="margin-top:2px;">needs attention</div>
+        </div>
+      </div>
+
+      <div class="nba-card" id="nbaCard">
+        <div class="nba-icon">⚡</div>
+        <div class="nba-body">
+          <div class="nba-eyebrow">Next Best Action</div>
+          <div class="nba-topic" id="nbaTopic">—</div>
+          <div class="nba-meta" id="nbaMeta">—</div>
+        </div>
+        <button class="nba-btn" onclick="showPage('track')">
+          Go to Track
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
+      <div class="charts-row anim-stagger">
+        <div class="chart-card">
+          <div class="chart-title">Progress by Category</div>
+          <div class="chart-wrap"><canvas id="barChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Skill Radar</div>
+          <div class="chart-wrap"><canvas id="radarChart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="progress-bars" id="progressBars"></div>
+    </div>
+
+    <!-- ═══════════ TRACK PAGE ═══════════ -->
+    <div class="page" id="page-track">
+      <div class="page-header">
+        <h2>Track Progress</h2>
+        <p>Update your topic status — changes save instantly</p>
+      </div>
+      <div id="trackContent"></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         QUIZ PAGE — AI-Powered
+         Layout:
+           • Section selector cards (4 cards, click to start)
+           • Loading state (spinner + AI generating message)
+           • Active quiz (questions rendered by JS)
+           • Results panel (rendered by JS after submit)
+         All dynamic content injected into #quizContent by JS.
+    ════════════════════════════════════════════════════════ -->
+    <div class="page" id="page-quiz">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h2>
+            AI Quiz
+            <span class="ai-badge">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              Powered by Claude AI
+            </span>
+          </h2>
+          <p>New questions generated every attempt. Self-assessment only — scores do <strong>not</strong> affect progress.</p>
+        </div>
+      </div>
+
+      <!-- Dynamic content: selector → loading → quiz → results -->
+      <div id="quizContent"></div>
+    </div>
+
+    <!-- ═══════════ ROADMAP PAGE ═══════════ -->
+    <div class="page" id="page-roadmap">
+      <div class="page-header">
+        <h2>Placement Roadmap</h2>
+        <p>Steps adapt to your progress. <strong>Click any step</strong> to expand detailed guidance.</p>
+      </div>
+      <div class="roadmap-list">
+        <div class="roadmap-line"></div>
+        <div id="roadmapContent"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════ RESOURCES PAGE ═══════════ -->
+    <div class="page" id="page-resources">
+      <div class="page-header">
+        <h2>Study Resources</h2>
+        <p>Curated links to help you prepare effectively</p>
+      </div>
+
+      <div class="section-label">🧪 Mock Tests &amp; Practice Platforms</div>
+      <div class="mock-tests-grid" id="mockTestsGrid"></div>
+
+      <div class="section-label" style="margin-top:28px;">📚 Study Resources</div>
+      <div class="resources-grid" id="resourcesGrid"></div>
+
+      <div class="tip-box" style="margin-top:16px;">
+        💡 <strong>Pro tip:</strong> Don't jump between too many resources. Pick one primary source per subject and go deep before switching.
+      </div>
+    </div>
+
+  </div><!-- /.main -->
+</div><!-- /#app -->
+
+<script src="script.js" defer></script>
+</body>
+</html>

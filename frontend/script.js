@@ -810,6 +810,8 @@ async function callClaudeAPI(prompt) {
     body:    JSON.stringify({ prompt }),
   });
 
+  console.log('[quiz] Backend raw response status:', response.status);
+
   // FIX: Backend now always returns { section, questions } or { error }.
   // All Gemini parsing, sanitization, and retry happens in server.js.
   // This function no longer needs to parse Gemini's raw format.

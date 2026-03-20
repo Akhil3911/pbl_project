@@ -13,7 +13,11 @@ const cors    = require('cors');
 const app  = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors());
+app.use(cors({
+  origin: "pbl-project-3ol5cxx6a-akhil3911s-projects.vercel.app",
+  methods: ['POST'],
+  credentials: true,
+}));
 app.use(express.json());
 
 // ── Health check ──────────────────────────────────────────────

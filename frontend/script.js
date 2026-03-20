@@ -21,7 +21,7 @@
 //  17  MOCK TESTS
 //  18  ── AI QUIZ MODULE ──────────────────────────────────
 //      18a  buildPrompt()         — reusable prompt template
-//      18b  callClaudeAPI()       — fetch wrapper (proxy)
+//      18b  callGeminiAPI()       — fetch wrapper (proxy)
 //      18c  renderQuizSelector()  — 4-card section picker
 //      18d  startQuizSection()    — fetch AI questions
 //      18e  renderQuizActive()    — render MCQ cards
@@ -715,31 +715,7 @@ function renderMockTests() {
 // ═══════════════════════════════════════════════════════════
 // 18 — AI QUIZ MODULE
 // ─────────────────────────────────────────────────────────
-// Architecture:
-//
-//  [User clicks section card]
-//       │
-//       ▼
-//  startQuizSection(sectionId)
-//       │  shows loading spinner
-//       ▼
-//  callClaudeAPI(prompt)         ← HTTP POST to proxy.js
-//       │  proxy adds API key & forwards to Claude
-//       ▼
-//  Claude AI returns JSON
-//       │
-//       ▼
-//  renderQuizActive(questions)   ← JS renders MCQ cards
-//       │
-//       ▼
-//  User selects answers
-//       │
-//       ▼
-//  submitQuiz()                  ← JS grades entirely in-browser
-//       │  score saved to localStorage (NEVER affects progress)
-//       ▼
-//  renderQuizResults()           ← show score + explanations
-//
+
 // ═══════════════════════════════════════════════════════════
 
 // ── Backend URL ──────────────────────────────────────────────
@@ -759,7 +735,7 @@ const DEMO_MODE = false;
 //
 // REUSABLE PROMPT TEMPLATE
 // This is the core AI integration point.
-// The prompt is crafted so Claude returns ONLY valid JSON.
+// The prompt is crafted so Gemini returns ONLY valid JSON.
 // Every run asks for "new unique questions" so repetition
 // is avoided across attempts.
 // ─────────────────────────────────────────────────────────
@@ -802,7 +778,7 @@ function getSectionTopics(id) {
 // Returns: parsed quiz JSON object
 // Throws:  Error with user-readable message on failure
 // ─────────────────────────────────────────────────────────
-async function callClaudeAPI(prompt) {
+async function callGeminiAPI(prompt) {
   // POST to our secure backend — API key is never in this file
   const response = await fetch(BACKEND_URL, {
     method:  'POST',
@@ -872,7 +848,7 @@ function renderQuizSelector() {
       }).join('')}
     </div>
     <div class="tip-box">
-      🤖 <strong>AI-powered:</strong> Claude AI generates fresh questions on every attempt — you will never see the same set twice. Scores are saved for your reference only and do <strong>not</strong> affect task progress.
+      🤖 <strong>AI-powered:</strong> Gemini AI generates fresh questions on every attempt — you will never see the same set twice. Scores are saved for your reference only and do <strong>not</strong> affect task progress.
     </div>`;
 }
 
@@ -900,19 +876,19 @@ async function startQuizSection(sectionId) {
       <div class="quiz-spinner"></div>
       <div class="quiz-loading-title">Generating your quiz…</div>
       <div class="quiz-loading-sub">
-        Claude AI is crafting 10 unique placement questions for
+        Gemini AI is crafting 10 unique placement questions for
         <strong>${section.title}</strong>. This takes about 5–10 seconds.
       </div>
       <div class="quiz-loading-ai-tag">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Powered by Claude AI (claude-sonnet-4-20250514)
+        Powered by Gemini AI (gemini-2.5-flash)
       </div>
     </div>`;
 
   try {
     // ── Live mode: call Gemini AI directly ────────────────
     const prompt   = buildPrompt(section);
-    const quizData = await callClaudeAPI(prompt);
+    const quizData = await callGeminiAPI(prompt);
 
     // Validate each question has required fields
     const questions = quizData.questions.filter(q =>

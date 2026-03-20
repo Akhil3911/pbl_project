@@ -808,6 +808,7 @@ async function callClaudeAPI(prompt) {
     method:  'POST',
     headers: { 'Content-Type': 'application/json' },
     body:    JSON.stringify({ prompt }),
+    credentials:true
   });
 
   console.log('[quiz] Backend raw response status:', response.status);
